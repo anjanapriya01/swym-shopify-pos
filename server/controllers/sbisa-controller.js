@@ -5,9 +5,8 @@ const { createHmac } = require('crypto')
 const { application } = require('express')
 
 exports.fetchSubscriptions = async (req, res) => {
-    console.log("enterring here")
     const email = req.query.useremail
-    console.log("email",email);
+    //console.log("email",email);
     // const limit = req.query.limit
     // const offset = req.query.offset
     const timestamp = Date.now()
@@ -16,10 +15,9 @@ exports.fetchSubscriptions = async (req, res) => {
     }
     await getRegidSessionid(email, res.locals.pid, res.locals['swym-store-endpoint'], res.locals['swym-store-secret'], timestamp)
         .then(idRes => {
-            console.log('>>> authenticated', idRes)
+            // console.log('>>> authenticated', idRes)
             getAllSubscriptions(email, idRes.regid, idRes.sessionid, res.locals.pid, res.locals['swym-store-endpoint'],10,0)
                 .then(postRes => {
-                    console.log('>>>>> bispa list :', postRes)
                     res.json(postRes)
                 })
                 .catch(error => {
@@ -27,7 +25,6 @@ exports.fetchSubscriptions = async (req, res) => {
         })
 }
 exports.addProductToWatchlist = async (req, res) => {
-    console.log("'/bispa/add/subscription' call")
     const email = req.query.useremail
     const epi = Number(req.query.epi)
     const empi = Number(req.query.empi)
@@ -62,7 +59,6 @@ exports.addProductToWatchlist = async (req, res) => {
                     res.json(postRes)
                 })
                 .catch(error => {
-                    // console.log('>>> catch block', error)
                     res.status(error.status).json(error)})
         })
 }
@@ -170,19 +166,12 @@ async function addVariantToWatchlist(email, epi, empi, du, adminemail, rid, sess
         .then(response => response.data)
         .catch(function (error) {
             if (error.response) {
-                // The request was made and the server responded with a status code
-                // that falls out of the range of 2xx
                 console.log(error.response.data)
                 console.log(error.response.status)
                 console.log(error.response.headers)
-                // console.log('>>> res error:', error.response)
             } else if (error.request) {
-                // The request was made but no response was received
-                // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-                // http.ClientRequest in node.js
                 console.log('>>> req error:',error.request)
             } else {
-                // Something happened in setting up the request that triggered an Error
                 console.log('Error', error.message)
             }
             console.log('error config:',error.config)

@@ -21,7 +21,7 @@ module.exports.isAuthorized = async function(req, res, next) {
     const platformUrl=payload.dest;
     getPID(platformUrl)
     .then((data)=>{
-        console.log("check here",data.pid)
+        console.log("pid",data.pid)
         if(data.error){
             return res.status(401).json({msg:data.message})
         }
