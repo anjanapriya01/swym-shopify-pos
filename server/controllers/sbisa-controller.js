@@ -3,6 +3,7 @@ const axios = require('axios')
 // require('dotenv-safe').config()
 const { createHmac } = require('crypto')
 const { application } = require('express')
+const getHmacKeys = require('../utils/getHmacKeys');
 
 exports.fetchSubscriptions = async (req, res) => {
     const email = req.query.useremail
@@ -61,7 +62,7 @@ exports.addProductToWatchlist = async (req, res) => {
 async function getRegidSessionid(useremail, pid, endpoint, secret, timestamp) {
     timestamp = new Date(parseInt(timestamp))
     timestamp = timestamp.toISOString()
-    const hash='bd68234a679f99348c29c29e2b01312fbba9ea36d47d5bb773afb01dbd492c8b'
+    const {rchl,hash} = getHmacKeys(secret);
     const userAgent = 'manageuserdata' 
     let data = new URLSearchParams({
         useragenttype: userAgent
@@ -77,7 +78,7 @@ async function getRegidSessionid(useremail, pid, endpoint, secret, timestamp) {
             'Accept-Encoding':'application/json',
             'x-swym-hmac-sha256': hash,
             'x-swym-src': 'manage-user-data',
-            'x-swym-rchl': 'ConfigGET'
+            'x-swym-rchl': rchl
         },
 		
     }

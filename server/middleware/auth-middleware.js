@@ -1,5 +1,7 @@
 const jwt=require('jsonwebtoken');
 const axios = require('axios');
+require('dotenv-safe').config();
+const getHmacKeys = require('../utils/getHmacKeys');
 
 module.exports.isAuthorized = async function(req, res, next) {
     console.log('Auth middleware query params >>>', req.query)
@@ -26,7 +28,7 @@ module.exports.isAuthorized = async function(req, res, next) {
             return res.status(401).json({msg:data.message})
         }
         //const pid=data.pid;
-        res.locals={pid:data.pid,'swym-store-endpoint':data['swym-store-endpoint'],'swym-store-secret':'NyUFqqxxOwe8KDNA7ZCZac23'}
+        res.locals={pid:data.pid,'swym-store-endpoint':data['swym-store-endpoint'],'swym-store-secret':process.env.dev_store_secret_key}
         return next()
     })
     .catch((error) => {
@@ -38,7 +40,7 @@ function getTokenVerified(token, timestamp) {
     timestamp = new Date(parseInt(timestamp))
     timestamp = timestamp.toISOString()
     try{
-        const payload=jwt.verify(token, 'e6d605c2e6d539c0dd03c1a883539c2e', {
+        const payload=jwt.verify(token, process.env.client_secret, {
             algorithms: ['HS256'],
             clockTolerance: 10,
           });
@@ -56,13 +58,15 @@ function getPID(platformUrl) {
         'platform-url':platformUrl,
         'platform' : 'Shopify'
     }).toString();
+    
+    const {rchl,hash} = getHmacKeys(process.env.dashboard_secret_key);
     const url = `https://admin-sandbox.swymrelay.com/intersvc/find/platform-url?` + queryparams;
     const config = {
         headers: { 
             'Accept': 'application/json', 
-            'x-swym-hmac-sha256': '02dedccb9b87a03c5bdfdac9aac1e736eaac7ab55284e9b2b1230d38e32b86f2',
+            'x-swym-hmac-sha256': hash,
             'x-swym-src': 'swym-admin',
-            'x-swym-rchl': 'ConfigGET'
+            'x-swym-rchl': rchl
         }
     };
     return axios.get(url,config)
