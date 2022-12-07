@@ -60,7 +60,7 @@ function getPID(platformUrl) {
     }).toString();
     
     const {rchl,hash} = getHmacKeys(process.env.dashboard_secret_key);
-    const url = `https://admin-sandbox.swymrelay.com/intersvc/find/platform-url?` + queryparams;
+    const url = `${process.env.dashboard_url}/intersvc/find/platform-url?` + queryparams;
     const config = {
         headers: { 
             'Accept': 'application/json', 
