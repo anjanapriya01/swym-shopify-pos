@@ -10,7 +10,9 @@ app.use(express.static(path.join(__dirname,'public')))
 app.use((req, res, next) => {
     res.sendFile(path.join(__dirname, 'build'))
 })
-
+app.use(cors({
+    origin: '*'
+}))
 app.use('/sbisa', sbisaRouter)
 
 app.use(function (err, req, res, next) {

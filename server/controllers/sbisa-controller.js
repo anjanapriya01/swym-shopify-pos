@@ -6,16 +6,12 @@ const { application } = require('express')
 
 exports.fetchSubscriptions = async (req, res) => {
     const email = req.query.useremail
-    //console.log("email",email);
-    // const limit = req.query.limit
-    // const offset = req.query.offset
     const timestamp = Date.now()
     if (!email) {
         res.status(404).json({ message: `enter valid email`})
     }
     await getRegidSessionid(email, res.locals.pid, res.locals['swym-store-endpoint'], res.locals['swym-store-secret'], timestamp)
         .then(idRes => {
-            // console.log('>>> authenticated', idRes)
             getAllSubscriptions(email, idRes.regid, idRes.sessionid, res.locals.pid, res.locals['swym-store-endpoint'],10,0)
                 .then(postRes => {
                     res.json(postRes)
@@ -52,7 +48,6 @@ exports.addProductToWatchlist = async (req, res) => {
 
     getRegidSessionid(email, res.locals.pid, res.locals['swym-store-endpoint'], res.locals['swym-store-secret'], timestamp)
         .then(idRes => {
-            // console.log('>>> authenticated', idRes)
             addVariantToWatchlist(email, epi, empi, du, adminemail, idRes.regid, idRes.sessionid, res.locals.pid, res.locals['swym-store-endpoint'])
                 .then(postRes => {
                     console.log('>>>>> bispa add subscription :', postRes)
@@ -66,9 +61,6 @@ exports.addProductToWatchlist = async (req, res) => {
 async function getRegidSessionid(useremail, pid, endpoint, secret, timestamp) {
     timestamp = new Date(parseInt(timestamp))
     timestamp = timestamp.toISOString()
-    // const hash = createHmac('sha256', secret)
-    //     .update(timestamp)
-    //     .digest('hex')
     const hash='bd68234a679f99348c29c29e2b01312fbba9ea36d47d5bb773afb01dbd492c8b'
     const userAgent = 'manageuserdata' 
     let data = new URLSearchParams({

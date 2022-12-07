@@ -38,7 +38,7 @@ function getTokenVerified(token, timestamp) {
     timestamp = new Date(parseInt(timestamp))
     timestamp = timestamp.toISOString()
     try{
-        const payload=jwt.verify(token, '35208d2979e9f9c41ffcea3e8d85f4c9', {
+        const payload=jwt.verify(token, 'e6d605c2e6d539c0dd03c1a883539c2e', {
             algorithms: ['HS256'],
             clockTolerance: 10,
           });
